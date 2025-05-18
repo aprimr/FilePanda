@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Logo from "../assets/logo.png";
+import Logo from "../assets/logo-w.png";
 import { ArrowUpRight, ScanQrCode } from "lucide-react";
 import { FaLinkedin, FaGithub } from "react-icons/fa";
 import QRScanner from "./Scanner";
@@ -53,14 +53,6 @@ function NavBar() {
             rel="noopener noreferrer"
             className="flex items-center px-4 py-2 gap-1 bg-white rounded-md shadow-md"
           >
-            LinkedIn <ArrowUpRight className="h-4 w-4" />
-          </a>
-          <a
-            href="#"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center px-4 py-2 gap-1 bg-white rounded-md shadow-md"
-          >
             Source <ArrowUpRight className="h-4 w-4" />
           </a>
         </div>
@@ -80,26 +72,17 @@ function NavBar() {
                   <motion.div
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.6 }}
-                    className="absolute top-full mt-4 w-50 text-center"
+                    className="absolute top-full mt-4 w-65 text-white text-center"
                   >
-                    <div className="bg-white rounded-md px-3 py-2 text-sm shadow-md">
+                    <div className="absolute -top-1 left-0 right-18 bg-black rounded-md px-3 py-2 text-sm shadow-md">
                       Enter or share the code
                     </div>
-                    <div className="absolute -top-2 left-0 right-0 mx-auto w-3 h-3 bg-white rotate-45 transform translate-y-1 z-[-1]" />
+                    <div className="absolute -top-3 left-0 right-0 mx-auto w-3 h-3 bg-black rotate-45 transform translate-y-1 z-[-1]" />
                   </motion.div>
                 )}
               </AnimatePresence>
             </button>
           )}
-
-          <a
-            href="#"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="p-1 bg-white rounded-md shadow-md"
-          >
-            <FaLinkedin className="h-5 w-5" />
-          </a>
           <a
             href="#"
             target="_blank"
@@ -132,7 +115,7 @@ function NavBar() {
                   onClick={() => setActiveTab("enter")}
                   className={`px-5 py-2 -mb-[1px] ${
                     activeTab === "enter"
-                      ? "border-b-2 border-blue-600 text-blue-600"
+                      ? "border-b-2 border-black text-black"
                       : "text-gray-500 cursor-pointer"
                   }`}
                 >
@@ -142,7 +125,7 @@ function NavBar() {
                   onClick={() => setActiveTab("share")}
                   className={`px-5 py-2 -mb-[1px] ${
                     activeTab === "share"
-                      ? "border-b-2 border-blue-600 text-blue-600"
+                      ? "border-b-2 border-black text-black"
                       : "text-gray-500 cursor-pointer"
                   }`}
                 >
@@ -152,6 +135,9 @@ function NavBar() {
 
               {activeTab === "enter" && (
                 <div>
+                  <p className="block text-gray-700 text-sm font-bold mb-2">
+                    Scan a QR code
+                  </p>
                   <div className="border border-gray-300 rounded-md p-4 mb-3 bg-gray-100">
                     <QRScanner />
                   </div>
@@ -160,7 +146,7 @@ function NavBar() {
                       htmlFor="joinCode"
                       className="block text-gray-700 text-sm font-bold mb-2"
                     >
-                      Enter Join Code Manually
+                      Or enter Join Code Manually
                     </label>
                     <input
                       type="text"
@@ -172,11 +158,11 @@ function NavBar() {
                   <div className="flex justify-end gap-2">
                     <button
                       onClick={() => setIsModalOpen(false)}
-                      className="px-4 py-2 rounded-md bg-gray-200 text-gray-800"
+                      className="px-4 py-2 rounded-md bg-gray-200 text-gray-800 cursor-pointer"
                     >
                       Cancel
                     </button>
-                    <button className="px-4 py-2 rounded-md bg-blue-600 text-white">
+                    <button className="px-4 py-2 rounded-md bg-black text-white cursor-pointer">
                       JOIN
                     </button>
                   </div>
@@ -185,13 +171,16 @@ function NavBar() {
 
               {activeTab === "share" && (
                 <div>
+                  <p className="block text-gray-700 text-sm font-bold mb-2">
+                    Scan this QR code
+                  </p>
                   <div className="border border-gray-300 rounded-md p-4 mb-3 bg-white flex justify-center items-center">
                     <div className="text-center">
                       <Generator value="APRIM REGMI" />
                     </div>
                   </div>
                   <p className="block text-gray-700 text-sm font-bold mb-2">
-                    Share this join code
+                    Or share this join code
                   </p>
                   <div className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight tracking-widest focus:outline-none focus:shadow-outline mb-3 text-center font-mono">
                     MSH6628
@@ -199,12 +188,9 @@ function NavBar() {
                   <div className="flex justify-end gap-2">
                     <button
                       onClick={() => setIsModalOpen(false)}
-                      className="px-4 py-2 rounded-md bg-gray-200 text-gray-800"
+                      className="px-4 py-2 rounded-md bg-gray-200 text-gray-800 cursor-pointer"
                     >
                       Cancel
-                    </button>
-                    <button className="px-4 py-2 rounded-md bg-blue-600 text-white">
-                      Download QR
                     </button>
                   </div>
                 </div>
