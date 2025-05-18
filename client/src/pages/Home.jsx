@@ -3,6 +3,8 @@ import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { UploadCloud, X } from "lucide-react";
 import convertToBase64 from "../utils/convertToBase64";
+import socket from "../config/socket";
+import { useEffect } from "react";
 
 export default function Home() {
   const [isDragging, setIsDragging] = useState(false);
@@ -10,6 +12,12 @@ export default function Home() {
   const [fileFullScreenPreview, setFileFullScreenPreview] = useState(null);
 
   const allFilled = files.every((f) => f !== null);
+
+  useEffect(() => {
+    socket.on("connect", () => {
+      console.log("Connected to server" + socket.id);
+    });
+  }, []);
 
   const addFile = async (file) => {
     if (!file) return;
@@ -133,11 +141,11 @@ export default function Home() {
           </motion.div>
 
           <h1 className="text-3xl sm:text-5xl font-extrabold text-black">
-            Drag & drop
+            Drag & Drop
           </h1>
 
           <p className="text-black/70 text-base sm:text-xl">
-            Or click anywhere on the screen to upload files
+            or click anywhere on the screen to upload files
           </p>
 
           <p className="text-black/70 text-sm sm:text-base">

@@ -2,14 +2,17 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Logo from "../assets/logo-w.png";
 import { ArrowUpRight, ScanQrCode } from "lucide-react";
-import { FaLinkedin, FaGithub } from "react-icons/fa";
+import { FaGithub } from "react-icons/fa";
 import QRScanner from "./Scanner";
 import Generator from "./Generator";
+import generateRoomCode from "../utils/generateRoomCode";
 import { useNavigate, useLocation } from "react-router-dom";
 
 function NavBar() {
   const [showInfo, setShowInfo] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [scannedData, setScannedData] = useState(null);
+  const [roomCode, setRoomCode] = useState(null);
   const [activeTab, setActiveTab] = useState("enter");
 
   const navigate = useNavigate();
@@ -18,6 +21,8 @@ function NavBar() {
   const receiveRoute = location.pathname.startsWith("/receive/");
 
   useEffect(() => {
+    setRoomCode(generateRoomCode());
+
     const timer = setTimeout(() => {
       setShowInfo(false);
     }, 2000);
@@ -139,8 +144,9 @@ function NavBar() {
                     Scan a QR code
                   </p>
                   <div className="border border-gray-300 rounded-md p-4 mb-3 bg-gray-100">
-                    <QRScanner />
+                    <QRScanner onScanResult={setScannedData} />
                   </div>
+                  <p>Scanned: {scannedData}</p>
                   <div className="mb-3">
                     <label
                       htmlFor="joinCode"
@@ -176,14 +182,14 @@ function NavBar() {
                   </p>
                   <div className="border border-gray-300 rounded-md p-4 mb-3 bg-white flex justify-center items-center">
                     <div className="text-center">
-                      <Generator value="APRIM REGMI" />
+                      <Generator value={roomCode} />
                     </div>
                   </div>
                   <p className="block text-gray-700 text-sm font-bold mb-2">
                     Or share this join code
                   </p>
                   <div className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight tracking-widest focus:outline-none focus:shadow-outline mb-3 text-center font-mono">
-                    MSH6628
+                    {roomCode}
                   </div>
                   <div className="flex justify-end gap-2">
                     <button
