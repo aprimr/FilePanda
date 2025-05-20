@@ -131,7 +131,7 @@ function NavBar() {
             </button>
           )}
           <a
-            href="#"
+            href="https://github.com/aprimr/FilePanda"
             target="_blank"
             rel="noopener noreferrer"
             className="p-1 bg-white rounded-md shadow-md"
