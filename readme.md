@@ -6,7 +6,7 @@ File Panda is a lightweight, privacy-focused web application that allows users t
 
 ## 🔗 Live Demo
 
-🌐 Try it now: [filepanda.vercel.app](https://filepanda.vercel.app)
+🌐 Try it now: [filepanda.netlify.app](https://filepanda.netlify.app)
 
 You can open this link in two tabs/devices, share a join code, and test real-time file sharing.
 
