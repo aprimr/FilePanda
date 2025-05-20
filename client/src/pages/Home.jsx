@@ -1,28 +1,45 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { UploadCloud, X } from "lucide-react";
 import convertToBase64 from "../utils/convertToBase64";
 import socket from "../config/socket";
-import { useEffect } from "react";
+import { useRoomCode } from "../context/RoomCode.context.jsx";
+import generateRoomCode from "../utils/generateRoomCode";
 
 export default function Home() {
   const [isDragging, setIsDragging] = useState(false);
   const [files, setFiles] = useState([null, null, null]);
   const [fileFullScreenPreview, setFileFullScreenPreview] = useState(null);
+  const { roomCode, setRoomCode } = useRoomCode();
 
   const allFilled = files.every((f) => f !== null);
 
   useEffect(() => {
+    const newRoomCode = generateRoomCode();
+    setRoomCode(newRoomCode);
+
     socket.on("connect", () => {
-      console.log("Connected to server" + socket.id);
+      console.log("Connected to server " + socket.id);
+      socket.emit("create-room", newRoomCode);
     });
   }, []);
+
+  useEffect(() => {
+    socket.emit("send-files", {
+      roomCode,
+      files: [
+        { id: 1, file: files[0] },
+        { id: 2, file: files[1] },
+        { id: 3, file: files[2] },
+      ],
+    });
+  }, [files[0], files[1], files[2]]);
 
   const addFile = async (file) => {
     if (!file) return;
 
-    const maxFileSize = 100 * 1024; // 100KB
+    const maxFileSize = 1024 * 1024; // 1MB
 
     if (file.size > maxFileSize) {
       toast.error(`File too large. Max size is ${maxFileSize / 1024}KB`);
@@ -140,20 +157,19 @@ export default function Home() {
             <UploadCloud className="w-20 h-20 text-black transition-all duration-300 drop-shadow-md" />
           </motion.div>
 
-          <h1 className="text-3xl sm:text-5xl font-extrabold text-black">
-            Drag & Drop
+          <p className="text-black/70 text-[10px] ">
+            *Upload files then share the code
+          </p>
+          <h1 className="text-3xl sm:text-5xl font-extrabold text-black -mt-2">
+            Drop it like it's hot
           </h1>
 
-          <p className="text-black/70 text-base sm:text-xl">
-            or click anywhere on the screen to upload files
-          </p>
-
-          <p className="text-black/70 text-sm sm:text-base">
-            100% private — No tracking, no logging ⚡
+          <p className="text-black/70 text-base sm:text-xl font font-mono">
+            Drop files in this window or click anywhere on the screen
           </p>
 
           <p className="text-black/60 text-xs sm:text-sm italic">
-            PNG, JPG, JPEG — Max size 100KB
+            PNG, JPG, JPEG — Max size 1MB
           </p>
         </div>
 
@@ -180,7 +196,7 @@ export default function Home() {
           <img
             src={fileFullScreenPreview}
             alt="Fullscreen Preview"
-            className="max-w-screen-md max-h-full rounded-md shadow-lg"
+            className="w-96 h-auto px-4 sm:p-0 sm:max-w-screen-md sm:max-h-screen rounded-md shadow-lg"
           />
         </div>
       )}

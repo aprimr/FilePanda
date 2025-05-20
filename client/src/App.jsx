@@ -13,7 +13,7 @@ function App() {
         <NavBar />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/receive/:code" element={<Receive />} />
+          <Route path="/receive" element={<Receive />} />
           <Route path="/test" element={<Loading />} />
         </Routes>
         <Toaster />

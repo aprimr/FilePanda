@@ -1,33 +1,75 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
+import socket from "../config/socket";
 import Logo from "../assets/logo-w.png";
 import { ArrowUpRight, ScanQrCode } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
 import QRScanner from "./Scanner";
 import Generator from "./Generator";
-import generateRoomCode from "../utils/generateRoomCode";
+import { useRoomCode } from "../context/RoomCode.context.jsx";
 import { useNavigate, useLocation } from "react-router-dom";
 
 function NavBar() {
   const [showInfo, setShowInfo] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [scannedData, setScannedData] = useState(null);
-  const [roomCode, setRoomCode] = useState(null);
+  const [scannedData, setScannedData] = useState("");
+  const [enteredRoomCode, setEnteredRoomCode] = useState("");
   const [activeTab, setActiveTab] = useState("enter");
+  const { roomCode, setRoomCode } = useRoomCode();
 
   const navigate = useNavigate();
   const location = useLocation();
 
-  const receiveRoute = location.pathname.startsWith("/receive/");
+  const receiveRoute = location.pathname.startsWith("/receive"); // check if it is recieve route
+
+  const handleJoinRoom = () => {
+    if (!enteredRoomCode) {
+      toast.error("Please scan the QR or enter the room code.");
+      return;
+    }
+    if (enteredRoomCode.length !== 8) {
+      toast.error("Room Code must be 8 characters long.");
+      return;
+    }
+
+    socket.emit("check-room", enteredRoomCode, (exists) => {
+      if (!exists) {
+        toast.error("Invalid join code."); // error if room code doesnt exist
+        return;
+      }
+      socket.emit("join-room", enteredRoomCode); // join room if room code exists
+      navigate(`/receive?join=${enteredRoomCode}`); // navigate to receive page
+      setIsModalOpen(false);
+    });
+    setEnteredRoomCode("");
+  };
 
   useEffect(() => {
-    setRoomCode(generateRoomCode());
+    if (scannedData) {
+      socket.emit("check-room", scannedData, (exists) => {
+        if (!exists) {
+          toast.error("Invalid join code."); // error if room code doesnt exist
+          return;
+        }
+        socket.emit("join-room", scannedData); // join room if room code exists
+        navigate(`/receive?join=${scannedData}`); // navigate to receive page
+      });
+      setScannedData("");
+    }
+  }, [scannedData]);
 
+  useEffect(() => {
     const timer = setTimeout(() => {
       setShowInfo(false);
     }, 2000);
     return () => clearTimeout(timer);
   }, []);
+
+  const handleShareTabClick = () => {
+    setActiveTab("share");
+    socket.emit("join-room", roomCode);
+  };
 
   return (
     <>
@@ -127,7 +169,7 @@ function NavBar() {
                   Enter Code
                 </button>
                 <button
-                  onClick={() => setActiveTab("share")}
+                  onClick={handleShareTabClick}
                   className={`px-5 py-2 -mb-[1px] ${
                     activeTab === "share"
                       ? "border-b-2 border-black text-black"
@@ -146,7 +188,6 @@ function NavBar() {
                   <div className="border border-gray-300 rounded-md p-4 mb-3 bg-gray-100">
                     <QRScanner onScanResult={setScannedData} />
                   </div>
-                  <p>Scanned: {scannedData}</p>
                   <div className="mb-3">
                     <label
                       htmlFor="joinCode"
@@ -158,6 +199,10 @@ function NavBar() {
                       type="text"
                       id="joinCode"
                       placeholder="Enter Code Here"
+                      value={enteredRoomCode}
+                      onChange={(e) =>
+                        setEnteredRoomCode(e.target.value.toUpperCase())
+                      }
                       className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     />
                   </div>
@@ -168,7 +213,10 @@ function NavBar() {
                     >
                       Cancel
                     </button>
-                    <button className="px-4 py-2 rounded-md bg-black text-white cursor-pointer">
+                    <button
+                      onClick={handleJoinRoom}
+                      className="px-4 py-2 rounded-md bg-black text-white cursor-pointer"
+                    >
                       JOIN
                     </button>
                   </div>

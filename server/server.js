@@ -22,6 +22,30 @@ const io = new Server(server, {
 
 io.on("connection", (socket) => {
   console.log("Client connected", socket.id);
+
+  socket.on("create-room", (roomCode) => {
+    socket.join(roomCode);
+  });
+
+  socket.on("check-room", (roomCode, callback) => {
+    const exists = io.sockets.adapter.rooms.has(roomCode);
+    console.log(exists);
+    callback(exists);
+  });
+
+  socket.on("join-room", (roomCode) => {
+    console.log("Joined to room ", roomCode);
+    socket.join(roomCode);
+  });
+
+  socket.on("send-files", ({ roomCode, files }) => {
+    console.log(files);
+    io.to(roomCode).emit("receive-files", files);
+  });
+});
+
+app.get("/keep-alive", (req, res) => {
+  res.sendStatus(200);
 });
 
 server.listen(3000, () => {
