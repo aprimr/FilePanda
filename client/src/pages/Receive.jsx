@@ -23,7 +23,6 @@ export default function Receive() {
     socket.on("receive-files", (files) => {
       setFiles(files);
       setLoading(false);
-      console.log(files);
     });
 
     return () => {

@@ -20,7 +20,6 @@ export default function Home() {
     setRoomCode(newRoomCode);
 
     socket.on("connect", () => {
-      console.log("Connected to server " + socket.id);
       socket.emit("create-room", newRoomCode);
     });
   }, []);
