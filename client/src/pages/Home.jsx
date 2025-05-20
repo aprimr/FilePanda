@@ -157,9 +157,6 @@ export default function Home() {
             <UploadCloud className="w-20 h-20 text-black transition-all duration-300 drop-shadow-md" />
           </motion.div>
 
-          <p className="text-black/70 text-[10px] ">
-            *Upload files then share the code
-          </p>
           <h1 className="text-3xl sm:text-5xl font-extrabold text-black -mt-2">
             Drop it like it's hot
           </h1>
