@@ -54,7 +54,7 @@ export default function Receive() {
         {/* Main content */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
           {slots.map((file, idx) =>
-            file.file !== null ? (
+            file?.file ? (
               <div
                 key={idx}
                 className="flex flex-col items-center w-full max-w-[160px] mx-auto"
@@ -63,8 +63,12 @@ export default function Receive() {
                 <div className="relative w-full aspect-square border border-black rounded-lg overflow-hidden bg-gray-100">
                   {/* Download button */}
                   <a
-                    href={file.url}
-                    download
+                    href={
+                      typeof file.file === "string"
+                        ? file.file
+                        : URL.createObjectURL(file.file)
+                    }
+                    download={`filepanda-shared-${idx}`}
                     className="absolute top-2 right-2 z-10 bg-white p-1 rounded-full shadow hover:bg-gray-200 transition cursor-pointer"
                     title="Download"
                   >
@@ -73,7 +77,11 @@ export default function Receive() {
 
                   {/* Image */}
                   <img
-                    src={file.file}
+                    src={
+                      typeof file.file === "string"
+                        ? file.file
+                        : URL.createObjectURL(file.file)
+                    }
                     alt={file.name}
                     className="w-full h-full object-cover"
                   />
