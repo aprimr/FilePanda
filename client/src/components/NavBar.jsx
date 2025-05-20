@@ -54,7 +54,7 @@ function NavBar() {
         }
         socket.emit("join-room", scannedData); // join room if room code exists
         navigate(`/receive?join=${scannedData}`); // navigate to receive page
-        isModalOpen(false);
+        setIsModalOpen(false);
       });
       setScannedData("");
     }
