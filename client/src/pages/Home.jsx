@@ -38,6 +38,15 @@ export default function Home() {
   const addFile = async (file) => {
     if (!file) return;
 
+    const maxFileSize = 10 * 1024 * 1024; // 10 MB
+
+    if (file.size > maxFileSize) {
+      toast.error(
+        `File too large. Max size is ${(maxFileSize / 1024) * 1024}MB`
+      );
+      return;
+    }
+
     const base64 = await convertToBase64(file);
     setFiles((prev) => {
       const newFiles = [...prev];
@@ -158,7 +167,7 @@ export default function Home() {
           </p>
 
           <p className="text-black/60 text-xs sm:text-sm italic">
-            PNG, JPG, JPEG — Max 3 files
+            PNG, JPG, JPEG — Max size 10MB
           </p>
         </div>
 
